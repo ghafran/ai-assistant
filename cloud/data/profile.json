@@ -1,0 +1,15 @@
+{
+  "displayName": "Ghafran",
+  "homeAirport": "JFK",
+  "budgetTier": "cheapest",
+  "contacts": {
+    "g": { "name": "Greg", "phone": "+15551234567" }
+  },
+  "calendar": [
+    { "title": "Sync with Greg", "startsAt": "2026-06-26T15:00:00-04:00", "with": ["Greg"] }
+  ],
+  "preferences": {
+    "tripStyle": "budget",
+    "redEyeOk": true
+  }
+}

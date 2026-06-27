@@ -1,0 +1,79 @@
+name: AmbientAgent
+options:
+  bundleIdPrefix: com.ghafran
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+
+targets:
+  AmbientAgent:
+    type: application
+    platform: iOS
+    sources:
+      - AmbientAgent
+      - Shared
+    # On-device FastVLM vision is an opt-in — see VisionDescriber.swift for the
+    # mlx-swift-lm package deps + code to add. Kept out of the default build so
+    # iteration stays fast and Simulator-friendly.
+    dependencies:
+      - target: AmbientAgentWatch
+        embed: true
+    scheme:
+      testTargets:
+        - AmbientAgentTests
+    # Explicit Info.plist so we can set nested keys (ATS, scene manifest).
+    info:
+      path: AmbientAgent/Info.plist
+      properties:
+        NSMicrophoneUsageDescription: "Heard only during a short conversation when you wake the assistant."
+        NSCameraUsageDescription: "Used briefly for visual context during a short conversation."
+        NSSpeechRecognitionUsageDescription: "Your request is transcribed on-device."
+        NSContactsUsageDescription: "Used to resolve who you mean (e.g. 'g' → Greg) when sending a message."
+        NSCalendarsFullAccessUsageDescription: "Used to ground references like 'our meeting' to a real time."
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        # Dev-only: allow plaintext HTTP to localhost (the orchestrator) from the Simulator.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ghafran.ambientagent
+        MARKETING_VERSION: "0.1"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+
+  AmbientAgentWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - AmbientAgentWatch
+      - Shared
+    info:
+      path: AmbientAgentWatch/Info.plist
+      properties:
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: com.ghafran.ambientagent
+        UILaunchScreen: {}
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ghafran.ambientagent.watchkitapp
+        MARKETING_VERSION: "0.1"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "4"
+        WATCHOS_DEPLOYMENT_TARGET: "11.0"
+
+  AmbientAgentTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - AmbientAgentTests
+    dependencies:
+      - target: AmbientAgent
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ghafran.ambientagent.tests
+        SWIFT_VERSION: "6.0"

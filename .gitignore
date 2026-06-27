@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Xcode — generated project (regenerate with `xcodegen generate`) + build state
+ios/AmbientAgent.xcodeproj/
+DerivedData/
+build/
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Local data the app/cloud writes
+cloud/data/episodic.jsonl

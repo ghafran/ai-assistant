@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TaskSpec",
+  "description": "The structured handoff the on-device conversation loop emits for the cloud agent layer to execute. The local model NEVER does the task; it only produces this.",
+  "type": "object",
+  "required": ["intent", "summary", "slots", "needs_clarification", "confidence"],
+  "properties": {
+    "intent": {
+      "type": "string",
+      "description": "Coarse action class, e.g. book_travel, send_message, reminder, search, unknown"
+    },
+    "summary": {
+      "type": "string",
+      "description": "One-line restatement of what the user wants, in plain language"
+    },
+    "slots": {
+      "type": "object",
+      "description": "Extracted parameters relevant to the intent (destination, recipient, timeframe, etc.)"
+    },
+    "resolved_entities": {
+      "type": "object",
+      "description": "Entities resolved against local memory, e.g. {\"g\": {\"name\": \"Greg\", \"phone\": \"+1...\"}}"
+    },
+    "visual_context": {
+      "type": ["string", "null"],
+      "description": "What the camera saw, if relevant to the request; null otherwise"
+    },
+    "needs_clarification": {
+      "type": "boolean",
+      "description": "True if the request is not yet actionable and the user must be asked a follow-up"
+    },
+    "clarifying_question": {
+      "type": ["string", "null"],
+      "description": "The follow-up to speak back if needs_clarification is true"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  }
+}

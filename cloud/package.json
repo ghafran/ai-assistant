@@ -1,0 +1,16 @@
+{
+  "name": "ambient-agent-cloud",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cloud orchestrator: consumes a TaskSpec from the phone and runs Claude + tools to execute it.",
+  "scripts": {
+    "server": "node src/server.ts",
+    "demo": "node src/demo.ts",
+    "test": "node --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.69.0",
+    "zod": "^4.4.3"
+  }
+}

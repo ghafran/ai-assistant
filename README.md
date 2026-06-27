@@ -10,7 +10,7 @@ An **ambient agent**: press a small (eventually wearable, camera-equipped) butto
 
 ## Status
 
-- ✅ [`ios/`](ios/) — on-device conversation loop (SwiftUI + Speech + AVFoundation + FoundationModels for the LLM; **FastVLM/MLX vision wired as an opt-in**). Emits a TaskSpec and **POSTs it to the cloud**, then speaks back the agent's result. **Builds green** (iOS + watchOS + tests).
+- ✅ [`ios/`](ios/) — on-device conversation loop (SwiftUI + Speech + AVFoundation + FoundationModels for the LLM + **FastVLM/MLX vision, on-device**). Emits a TaskSpec and **POSTs it to the cloud**, then speaks back the agent's result. **Builds green** (iOS + watchOS + tests).
 - ✅ [`cloud/`](cloud/) — orchestrator (`claude-opus-4-8` + tool runner). Consumes the TaskSpec, runs the travel-search / send-message agents, returns the result.
 - ✅ **Phone ↔ cloud loop connected** ([`CloudClient.swift`](ios/AmbientAgent/Core/CloudClient.swift) → `POST /tasks`).
 - ✅ **Apple Watch wake button** ([`AmbientAgentWatch/`](ios/AmbientAgentWatch/) over WatchConnectivity) — the physical trigger.

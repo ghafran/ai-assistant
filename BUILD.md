@@ -82,7 +82,7 @@ Use a **real iPhone** for the full experience. The Simulator launches the app, b
 | Feature | Simulator | Device |
 |---|---|---|
 | FoundationModels (the LLM) | needs Apple Intelligence | ✅ |
-| FastVLM/MLX vision (opt-in, off by default) | n/a | needs device when enabled |
+| FastVLM/MLX vision | Metal limited | ✅ |
 | Camera keyframe | no real camera | ✅ |
 | Messages compose sheet | won't send | ✅ |
 
@@ -127,7 +127,8 @@ The turn auto-ends after ~1.6s of silence — no second tap.
 - **"requires Xcode, but active developer directory is CommandLineTools"** — you skipped the `xcode-select -s` step above.
 - **Package resolution fails / MLX won't fetch** — File → Packages → Reset Package Caches, then resolve again. The LLM/VLM libraries come from `mlx-swift-lm` (`branch: main` in `project.yml`); pin a tag for reproducibility.
 - **`cannot execute tool 'metal' due to missing Metal Toolchain`** — Xcode 26 ships the Metal compiler as a separate component (MLX needs it). Install once: `xcodebuild -downloadComponent MetalToolchain` (or Xcode → Settings → Components).
-- **Want on-device vision?** `VisionDescriber.swift` is a no-op by default (keeps builds fast + Simulator-friendly). Its header comment has the exact `mlx-swift-lm` + HuggingFace package deps and verified `ChatSession`/`VLMRegistry.fastvlm` code to enable FastVLM. Enabling it requires a real device and the Metal Toolchain.
+- **"Macro 'MLXHuggingFaceMacros' must be enabled before it can be used"** — FastVLM's loader uses a Swift macro. Xcode shows a one-time **Trust & Enable** prompt on first build — click it. CLI: add `-skipMacroValidation` to `xcodebuild`.
+- **Don't want vision?** Set `enabled = false` in `VisionDescriber.swift` — the loop runs fine without it (skips the MLX weight download + Metal at runtime).
 - **Watch app doesn't embed / build** — confirm the watch bundle id is a prefix-child of the iOS id (`com.<you>.ambientagent.watchkitapp`) and `WKCompanionAppBundleIdentifier` matches the iOS id.
 - **"On-device model unavailable"** — enable Apple Intelligence in Settings (Apple-Intelligence-capable device required); `IntentExtractor.availabilityMessage()` reports the specific reason.
 - **App can't reach the cloud on device** — wrong `CloudClient.baseURL` (use the Mac's LAN IP), Mac firewall blocking 8787, or phone on a different network.

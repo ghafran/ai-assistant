@@ -10,7 +10,7 @@ The on-device **conversation loop** for the ambient agent: wake → listen + see
       ▼
  SpeechTranscriber   ──┐  on-device streaming ASR (Speech.framework)
  CameraCapture       ──┤  one keyframe (AVFoundation)
- VisionDescriber     ──┘  caption via FastVLM/MLX (opt-in; no-op by default)
+ VisionDescriber     ──┘  caption via FastVLM/MLX (on-device, enabled)
       │   (auto-stops on ~1.6s of silence — VAD)
       ▼
  IntentExtractor        FoundationModels, @Generable guided generation
@@ -51,15 +51,14 @@ On a physical device: select your team in Signing & Capabilities (the bundle id 
 
 Emitted specs land in the app's `Documents/outbox/` and print to the Xcode console.
 
-## On-device vision (FastVLM / MLX) — opt-in
+## On-device vision (FastVLM / MLX)
 
-`VisionDescriber` is a **no-op by default** so the build stays fast and Simulator-friendly. The real implementation runs **FastVLM** via [MLX Swift LM](https://github.com/ml-explore/mlx-swift-lm) (`ChatSession` + `VLMRegistry.fastvlm`, i.e. `mlx-community/FastVLM-0.5B-bf16`) and captions the camera keyframe into `IntentExtractor`.
+[VisionDescriber](AmbientAgent/Core/VisionDescriber.swift) runs **FastVLM** via [MLX Swift LM](https://github.com/ml-explore/mlx-swift-lm) (`ChatSession` + `VLMRegistry.fastvlm` = `mlx-community/FastVLM-0.5B-bf16`) and captions the camera keyframe into `IntentExtractor`. Enabled by default; **compiles green**. Packages are wired in `project.yml` (`mlx-swift-lm`, `swift-transformers`, `swift-huggingface`). Notes:
 
-To turn it on, follow the step-by-step header comment in [Core/VisionDescriber.swift](AmbientAgent/Core/VisionDescriber.swift) — it lists the exact `mlx-swift-lm` / HuggingFace package deps to add to `project.yml` and the verified `ChatSession` code to paste in. Notes:
-
-- **Real device required** — MLX uses Metal; the Simulator's GPU support is limited. Use an A17 Pro+ iPhone.
-- **First run downloads the weights** (~hundreds of MB from Hugging Face); the loaded model is cached for the session (pre-warm via `preload()` on launch).
-- Enabling it makes every build pull in MLX + the Metal toolchain — that's why it's kept out of the default build.
+- **First Xcode build** prompts to **Trust & Enable** the `MLXHuggingFaceMacros` macro — click it (the loader uses a Swift macro). CLI equivalent: `-skipMacroValidation`.
+- **Metal Toolchain required** — `xcodebuild -downloadComponent MetalToolchain` (Xcode 26 ships it separately).
+- **Real device for runtime** — MLX uses Metal; Simulator GPU support is limited. First run downloads the weights (~hundreds of MB); `preload()` warms them on launch.
+- To disable, set `enabled = false` in `VisionDescriber` (the loop runs fine without vision).
 
 ## Recently added
 

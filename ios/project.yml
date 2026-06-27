@@ -5,6 +5,20 @@ options:
     iOS: "26.0"
   createIntermediateGroups: true
 
+packages:
+  # On-device FastVLM: MLXVLM/MLXLMCommon + the HuggingFace loader macro.
+  mlx-swift-lm:
+    url: https://github.com/ml-explore/mlx-swift-lm
+    branch: main
+  # The loader macro expansion references Tokenizers.AutoTokenizer and
+  # HuggingFace.HubClient, so the app target must link both directly.
+  swift-transformers:
+    url: https://github.com/huggingface/swift-transformers
+    from: "1.3.0"
+  swift-huggingface:
+    url: https://github.com/huggingface/swift-huggingface
+    from: "0.8.1"
+
 targets:
   AmbientAgent:
     type: application
@@ -12,10 +26,17 @@ targets:
     sources:
       - AmbientAgent
       - Shared
-    # On-device FastVLM vision is an opt-in — see VisionDescriber.swift for the
-    # mlx-swift-lm package deps + code to add. Kept out of the default build so
-    # iteration stays fast and Simulator-friendly.
     dependencies:
+      - package: mlx-swift-lm
+        product: MLXVLM
+      - package: mlx-swift-lm
+        product: MLXLMCommon
+      - package: mlx-swift-lm
+        product: MLXHuggingFace
+      - package: swift-transformers
+        product: Tokenizers
+      - package: swift-huggingface
+        product: HuggingFace
       - target: AmbientAgentWatch
         embed: true
     scheme:
